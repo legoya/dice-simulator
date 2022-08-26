@@ -1,3 +1,74 @@
+.dice-display-table {
+  height: 100px;
+  min-width: 240px;
+  max-width: 330px;
+  width: 90%;
+  border-style: solid;
+  border-color: #838181;
+  padding: 10px;
+  display:table;
+  border-collapse:separate;
+  border-spacing:5px;
+}
+
+.die-face-row {
+  display: table-row;
+}
+
+.die-face {
+  height: 50px;
+  width: 50px;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  justify-content: center;
+  display: table-cell;
+}
+
+.die-x-row {
+  display: table-row;
+}
+
+.die-x {
+  color: red;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: bold;
+  justify-content: center;
+  display: table-cell;
+}
+
+input {
+  width: 60px;
+  margin: 4px 0;
+}
+
+input[type=number] {
+  width: 53px;
+  margin: 4px 0;
+}
+
+button {
+  width: 120px;
+  margin: 4px 0;
+}
+
+.histogram {
+  min-width: 240px;
+  max-width: 330px;
+}
+
+.h-bar {
+  height: 12px;
+  background-color: #000;
+  color: #fff;
+  min-width: 2px;
+  font-size: 10px;
+  border-style: solid;
+  border-color: #838181;
+  border-width: 1px;
+}
+
 .App {
   text-align: center;
 }
