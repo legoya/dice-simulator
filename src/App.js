@@ -7,6 +7,12 @@ const MAX_DICE_FACES = 32;
 
 const MAX_DICE = 4;
 
+const RollMode = {
+	INDEPENDENT: "Independent",
+	DIE_DEPENDENT: "Die Dependent",
+	FULLY_DEPENDENT: "Fully Dependent",
+}
+
 function DieFace(props) {
     return <div
         className={"die-face"}
@@ -19,7 +25,7 @@ function DieFace(props) {
     </div>
 }
 
-function Config({dice, setDice, isRealisticMode, setMode, setPageToConfig}) {
+function Config({dice, setDice, rollMode, setMode, setPageToConfig}) {
   function addDice() {
     setDice([
       ...dice,
@@ -106,8 +112,13 @@ function Config({dice, setDice, isRealisticMode, setMode, setPageToConfig}) {
           <AddDiceButton/>
 
           <DiceDisplay/>
-          <input type="radio" id="isRealisticMode" checked={isRealisticMode} onClick={() => setMode(!isRealisticMode)}/>
-          <label htmlFor="isRealisticMode"> {" Realistic Roll Mode"}</label><br/>
+
+          <div class="tab">
+            <button class="tablinks" onClick={() => setMode(RollMode.INDEPENDENT)}>{RollMode.INDEPENDENT}</button>
+            <button class="tablinks" onClick={() => setMode(RollMode.DIE_DEPENDENT)}>{RollMode.DIE_DEPENDENT}</button>
+            <button class="tablinks" onClick={() => setMode(RollMode.FULLY_DEPENDENT)}>{RollMode.FULLY_DEPENDENT}</button>
+          </div>
+          <p>{rollMode}</p>
 
           <button
               disabled={dice.length === 0}
@@ -118,7 +129,7 @@ function Config({dice, setDice, isRealisticMode, setMode, setPageToConfig}) {
   );
 }
 
-function Roller({dice, isRealisticMode, setPageToConfig}) {
+function Roller({dice, rollMode, setPageToConfig}) {
     const nUniqueRollValues = dice.reduce((tot, d) => tot + parseInt(d.sides), 1) - dice.length;
     const nPermutations = dice.reduce((tot, d) => tot * parseInt(d.sides), 1);
 
@@ -145,24 +156,19 @@ function Roller({dice, isRealisticMode, setPageToConfig}) {
         return shuffle(Array.from(Array(nPermutations).keys()));
     }
 
-    function newRoll(n) {
-        let [v, ...rest] = rollStack;
+    function newRoll(nOption) {
+        let [rollIndex, ...rest] = rollStack;
 
-        let rolls = [];
-        dice.forEach(die => {
-            const a = Math.floor(n / die.sides);
-            const b = Math.floor(v / a);
-            rolls.push(b + 1);
-            v %= a;
-            n = a;
+        const rolls = dice.map(die => {
+            const nextNOptions = Math.floor(nOption / die.sides);
+            const roll = Math.floor(rollIndex / nextNOptions) + 1;
+            rollIndex %= nextNOptions;
+            nOption = nextNOptions;
+            return roll;
         });
 
-        if (rest.length === 0) {
-            setRollStack(initRollStack());
-        } else {
-            setRollStack(rest);
-        }
-
+        setRollStack(rest.length === 0 ? initRollStack() : rest);        
+        
         return rolls;
     }
 
@@ -242,7 +248,7 @@ function Roller({dice, isRealisticMode, setPageToConfig}) {
 
 
     function rollDice() {
-        const rollValues = isRealisticMode ? realisticRoll() : newRoll(nPermutations);
+        const rollValues = rollMode === RollMode.INDEPENDENT ? realisticRoll() : newRoll(nPermutations);
         const rollTotal = calcRollTotal();
         setLastRoll(rollValues);
         setRollCount(rollCount+1);
@@ -254,14 +260,14 @@ function Roller({dice, isRealisticMode, setPageToConfig}) {
     }
 
 
-    function HBar(props) {
-        return <div className={"h-bar"} style={{width: props.size}}>{props.number}</div>
+    function DataBar(props) {
+        return <div className={"data-bar"} style={{width: props.size}}>{props.number}</div>
     }
 
-    function H() {
+    function Histogram() {
         const mostFreq = Math.max(...rollHistogram);
         const histogram = rollHistogram.map((freq, index) => {
-           return <HBar size={`${(freq/mostFreq)*100}%`} number={index + dice.length}/>
+           return <DataBar size={`${(freq/mostFreq)*100}%`} number={index + dice.length}/>
         });
 
         return (
@@ -276,7 +282,7 @@ function Roller({dice, isRealisticMode, setPageToConfig}) {
             <label htmlFor="rollButton"> {` ${rollCount} roll(s)`}</label><br/>
             <RollDisplay/>
             <p>{`The last roll value was: ${lastRollValue}`}</p>
-            <H/>
+            <Histogram/>
 
             <button onClick={() => setPageToConfig(true)} >Back to Configuration</button>
         </div>
@@ -285,14 +291,14 @@ function Roller({dice, isRealisticMode, setPageToConfig}) {
 
 function App() {
     const [dice, setDice] = useState([]);
-    const [isRealisticMode, setMode] = useState(false);
+    const [rollMode, setMode] = useState(RollMode.INDEPENDENT);
     const [isConfigPage, setPageToConfig] = useState(true);
 
     if (isConfigPage) {
-        return <Config {...{dice, setDice, isRealisticMode, setMode, setPageToConfig}}/>;
+        return <Config {...{dice, setDice, rollMode, setMode, setPageToConfig}}/>;
     }
 
-    return <Roller {...{dice, isRealisticMode, setPageToConfig}}/>;
+    return <Roller {...{dice, rollMode, setPageToConfig}}/>;
 
 }
 

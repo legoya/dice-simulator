@@ -49,8 +49,11 @@ input[type=number] {
 }
 
 button {
-  width: 120px;
-  margin: 4px 0;
+  width: 115px;
+  margin-left: 0px;
+  margin-right: 4px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 .histogram {
@@ -58,7 +61,7 @@ button {
   max-width: 330px;
 }
 
-.h-bar {
+.data-bar {
   height: 12px;
   background-color: #000;
   color: #fff;
