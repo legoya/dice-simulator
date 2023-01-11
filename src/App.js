@@ -1,29 +1,21 @@
 import './App.css';
 import React, { useState } from 'react';
 
-const DEFAULT_DICE_FACES = 6;
-const MIN_DICE_FACES = 2;
-const MAX_DICE_FACES = 32;
+import DieFace from './components/DieFace';
+import {
+    DEFAULT_DICE_FACES,
+    MIN_DICE_FACES,
+    MAX_DICE_FACES,
+    MAX_DICE
+} from './constants';
 
-const MAX_DICE = 4;
+import { RollMode } from './models';
 
-const RollMode = {
-	INDEPENDENT: "Independent",
-	DIE_DEPENDENT: "Die Dependent",
-	FULLY_DEPENDENT: "Fully Dependent",
-}
-
-function DieFace(props) {
-    return <div
-        className={"die-face"}
-        style={{
-            background: props.color,
-            color: props.numColor
-        }}
-    >
-        {props.displayNumber}
-    </div>
-}
+// const RollMode = {
+// 	INDEPENDENT: "Independent",
+// 	DIE_DEPENDENT: "Die Dependent",
+// 	FULLY_DEPENDENT: "Fully Dependent",
+// }
 
 function Config({dice, setDice, rollMode, setMode, setPageToConfig}) {
   function addDice() {
