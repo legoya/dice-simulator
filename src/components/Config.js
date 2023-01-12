@@ -117,7 +117,7 @@ function DiceConfigDisplay( { dice, setDice }) {
     }
 
     const dieFaces = dice.map((die) => {
-      return (<DieFace displayNumber={die.sides} color={die.dieColor} numColor={die.dieNumColor}/>);
+        return (<DieFace displayNumber={die.sides} color={die.dieColor} numColor={die.dieNumColor}/>);
     });
 
     const dieXs = dice.map((_, index) => <DieXButton index={index}/>);
