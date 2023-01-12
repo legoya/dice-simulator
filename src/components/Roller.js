@@ -7,6 +7,7 @@ import { RollMode } from "../models";
 
 import RollGenerator from '../rollGenerator/RollGenerator'; 
 import IndependentRollGenerator from '../rollGenerator/IndependentRollGenerator';
+import FullyDependentRollGenerator from '../rollGenerator/FullyDependentRollGenerator';
 
 function Histogram( { rollHistogram, dice} ) {
     function DataBar(props) {
@@ -40,6 +41,11 @@ function getRollGenerator(rollMode, dice) {
     switch(rollMode) {
         case RollMode.INDEPENDENT:
             return new IndependentRollGenerator(dice);
+        case RollMode.FULLY_DEPENDENT:
+
+            const [rollStack, setRollStack] = useState(initRollStack(nPermutations)); // fully dependent
+
+            return new FullyDependentRollGenerator(dice);
         default:
             return new RollGenerator(dice);
     }
@@ -57,8 +63,6 @@ function Roller({dice, rollMode, setPageToConfig}) {
 
     const [diceRollFrequencies, setDiceRollFrequencies] = useState(makeDiceFrequencyTable(nPermutations, dice)); // die dependent
     const [nRemainingRollsInStack, setNRemainingRollsInStack] = useState(nPermutations); // die dependent
-
-    const [rollStack, setRollStack] = useState(initRollStack(nPermutations)); // fully dependent
 
     const rollGen = getRollGenerator(rollMode, dice);
 
@@ -105,11 +109,11 @@ function Roller({dice, rollMode, setPageToConfig}) {
         });
     }
 
-    function fullyDependentRollValues(nOption, setRollStack) {
+    function fullyDependentRollValues(nPermutations, setRollStack) {
         let [rollIndex, ...rest] = rollStack;
 
         const rolls = dice.map(die => {
-            const nextNOptions = Math.floor(nOption / die.sides);
+            const nextNOptions = Math.floor(nPermutations / die.sides);
             const roll = Math.floor(rollIndex / nextNOptions) + 1;
             rollIndex %= nextNOptions;
             nOption = nextNOptions;
