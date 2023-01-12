@@ -107,25 +107,25 @@ function AddDiceButton( { setDice, dice, selectedSides, selectedDieColor, select
     );
 }
 
-function DiceConfigDisplay( { dice, setDice }) {
-    function DieXButton(props) {
-        return (<p className={"die-x"} onClick={() => removeDie(props.index)}>X</p>);
-    }
-
+function RemoveDieButton( { dice, index, setDice } ) {
     function removeDie(i) {
-        setDice(dice.slice(0,i).concat(dice.slice(i+1)))
+        setDice(dice.slice(0, i).concat(dice.slice(i + 1)))
     }
 
+    return (<p className={"die-x"} onClick={() => removeDie(index)}>X</p>);
+}
+
+function DiceConfigDisplay( { dice, setDice }) {
     const dieFaces = dice.map((die) => {
         return (<DieFace displayNumber={die.sides} color={die.dieColor} numColor={die.dieNumColor}/>);
     });
 
-    const dieXs = dice.map((_, index) => <DieXButton index={index}/>);
+    const removeDieButtons = dice.map((_, index) => <RemoveDieButton dice={dice} index={index} setDice={setDice}/>);
 
     return (
         <div className={"dice-display-table"}>
             <div className={"die-face-row"}>{dieFaces}</div>
-            <div className={"die-x-row"}>{dieXs}</div>
+            <div className={"die-x-row"}>{removeDieButtons}</div>
         </div>
     );
 }

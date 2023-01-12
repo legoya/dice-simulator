@@ -3,46 +3,51 @@ import RollGenerator from "./RollGenerator";
 class DieDependentRollGenerator extends RollGenerator {
     constructor(dice) {
         super(dice);
-        this.nPermutations = dice.reduce((total, die) => total * parseInt(die.sides), 1);
-        this.diceRollFrequencies = this._makeDiceFrequencyTable();
-        this.nRemainingRollsInStack = this.nPermutations;
+        this.numberOfFacePermutations = dice.reduce((total, die) => total * parseInt(die.sides), 1);
+        this.diceFaceFrequencies = this._initDiceFaceFrequencies();
+        this.numberOfRemaingRollsUntilReset = this.numberOfFacePermutations - 1;
     }
 
     rollValues()  {
-        const rollValues = this.diceRollFrequencies.map((dieFreq) => {
-            return this._getStackedRoll(dieFreq);
+        const rollValues = this.diceFaceFrequencies.map((dieFrequencies) => {
+            return this._sampleRollFromDiceFrequencies(dieFrequencies);
         });
 
-
-        if (this.nRemainingRollsInStack === 1) {
-            // if the stack is complete, the count needs to go back to nPermutations
-            this.diceRollFrequencies = this._makeDiceFrequencyTable();
-            this.nRemainingRollsInStack = this.nPermutations;
+        if (this.numberOfRemaingRollsUntilReset === 0) {
+            // if the stack is complete, the count needs to go back to numberOfFacePermutations.
+            this.diceFaceFrequencies = this._initDiceFaceFrequencies();
+            this.numberOfRemaingRollsUntilReset = this.numberOfFacePermutations - 1;
             return rollValues;
         }
 
-        this.nRemainingRollsInStack--;
+        this.numberOfRemaingRollsUntilReset--;
         return rollValues;
 
     }
 
-    _getStackedRoll(dieFreq) {
-        let sample = RollGenerator.getRandomInt(0, this.nRemainingRollsInStack-1)
-        for (let i = 0; i < dieFreq.length; i++) {
-            if (dieFreq[i] === 0) {
+    _sampleRollFromDiceFrequencies(dieFrequencies) {
+        let sample = RollGenerator.getRandomInt(0, this.numberOfRemaingRollsUntilReset)
+
+        for (let faceIndex = 0; faceIndex < dieFrequencies.length; faceIndex++) {
+            if (dieFrequencies[faceIndex] === 0) {
+                // this face value has already occured the maximum allowable times since reset.
                 continue;
             }
-            if (sample - dieFreq[i] < 0) {
-                dieFreq[i] = dieFreq[i] - 1;
-                return i+1;
+            
+            if (sample - dieFrequencies[faceIndex] < 0) {
+                dieFrequencies[faceIndex] = dieFrequencies[faceIndex] - 1;
+                // the face value for the input die on this roll is faceIndex+1.
+                return faceIndex+1;
             }
-            sample -= dieFreq[i];
+            
+            // haven't yet determined the face value for the die, decrement sample and loop to next face value.
+            sample -= dieFrequencies[faceIndex];
         }
     }
 
-    _makeDiceFrequencyTable() {
+    _initDiceFaceFrequencies() {
         return this.dice.map((die) => {
-            return Array(die.sides).fill(this.nPermutations / die.sides);
+            return Array(die.sides).fill(this.numberOfFacePermutations / die.sides);
         });
     }
 }

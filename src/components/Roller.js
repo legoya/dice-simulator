@@ -2,18 +2,9 @@ import React, { useState } from 'react';
 
 import DieFace from './DieFace';
 
-import { RollMode } from "../models";
 
-import IndependentRollGenerator from '../rollGenerator/IndependentRollGenerator';
-import FullyDependentRollGenerator from '../rollGenerator/FullyDependentRollGenerator';
-import DieDependentRollGenerator from '../rollGenerator/DieDependentRollGenerator';
-import { DEFAULT_ROLL_MODE } from '../constants';
-
-
-function Roller({dice, rollMode, setIsConfigPage}) {
-    const rollGenerator = getRollGenerator(rollMode, dice);
-    
-    const nUniqueRollValues = dice.reduce((tot, d) => tot + parseInt(d.sides), 1) - dice.length;
+function Roller({dice, setIsConfigPage, rollGenerator}) {
+    const nUniqueRollValues = dice.reduce((total, die) => total + parseInt(die.sides), 1) - dice.length;
 
     const [lastRoll, setLastRoll] = useState(Array(dice.length).fill("?"));
     const [lastRollTotal, setLastRollTotal] = useState("?");
@@ -25,7 +16,7 @@ function Roller({dice, rollMode, setIsConfigPage}) {
         setLastRoll(rollValues);
         setRollCount(rollCount+1);
 
-        const rollTotal = rollGenerator.rollTotal(rollValues);
+        const rollTotal = rollValues.reduce((total, face) => total + face, 0);
         setLastRollTotal(rollTotal);
 
         const newRollHistogram = [...rollHistogram];
@@ -47,11 +38,8 @@ function Roller({dice, rollMode, setIsConfigPage}) {
 }
 
 function RollHistogram( { rollHistogram, dice} ) {
-    function DataBar(props) {
-        return <div className={"data-bar"} style={{width: props.size}}>{props.number}</div>
-    }
-
     const mostFreq = Math.max(...rollHistogram);
+
     const histogram = rollHistogram.map((freq, index) => {
        return <DataBar size={`${(freq/mostFreq)*100}%`} number={index + dice.length}/>
     });
@@ -59,7 +47,12 @@ function RollHistogram( { rollHistogram, dice} ) {
     return (
         <div className={"histogram"}>
             {histogram}
-        </div>)
+        </div>
+    );
+}
+
+function DataBar( { size, number } ) {
+    return <div className={"data-bar"} style={{width: size}}>{number}</div>
 }
 
 function RollDisplay( { dice, lastRoll } ) {
@@ -72,19 +65,6 @@ function RollDisplay( { dice, lastRoll } ) {
             <div className={"die-face-row"}>{rollFaces}</div>
         </div>
     );
-}
-
-function getRollGenerator(rollMode, dice) {
-    switch(rollMode) {
-        case RollMode.INDEPENDENT:
-            return new IndependentRollGenerator(dice);
-        case RollMode.FULLY_DEPENDENT:
-            return new FullyDependentRollGenerator(dice);
-        case RollMode.DIE_DEPENDENT:
-            return new DieDependentRollGenerator(dice);
-        default:
-            return getRollGenerator(DEFAULT_ROLL_MODE, dice);
-    }
 }
 
 export default Roller;
