@@ -10,7 +10,7 @@ import {
 } from '.././constants';
 import { RollMode } from '.././models';
 
-function Config( { dice, setDice, rollMode, setMode, setPageToConfig } ) {
+function Config( { dice, setDice, rollMode, setMode, setIsConfigPage } ) {
     const [selectedSides, setSides] = useState(DEFAULT_DICE_FACES);
     const [selectedDieColor, setDieColor] = useState(DEFAULT_DIE_FACE_COLOUR);
     const [selectedDieNumColor, setDieNumColor] = useState(DEFAULT_DIE_NUMBER_COLOUR);
@@ -27,7 +27,7 @@ function Config( { dice, setDice, rollMode, setMode, setPageToConfig } ) {
   
             <AddDiceButton setDice={setDice} dice={dice} selectedSides={selectedSides} selectedDieColor={selectedDieColor} selectedDieNumColor={selectedDieNumColor}/>
   
-            <DiceDisplay dice={dice} setDice={setDice}/>
+            <DiceConfigDisplay dice={dice} setDice={setDice}/>
   
             <div class="tab">
               <button class="tablinks" onClick={() => setMode(RollMode.INDEPENDENT)}>{RollMode.INDEPENDENT}</button>
@@ -38,7 +38,7 @@ function Config( { dice, setDice, rollMode, setMode, setPageToConfig } ) {
   
             <button
                 disabled={dice.length === 0}
-                onClick={() => setPageToConfig(false)}
+                onClick={() => setIsConfigPage(false)}
             > Start
             </button>
         </div>
@@ -107,7 +107,7 @@ function AddDiceButton( { setDice, dice, selectedSides, selectedDieColor, select
     );
 }
 
-function DiceDisplay( { dice, setDice }) {
+function DiceConfigDisplay( { dice, setDice }) {
     function DieXButton(props) {
         return (<p className={"die-x"} onClick={() => removeDie(props.index)}>X</p>);
     }
