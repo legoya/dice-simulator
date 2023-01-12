@@ -10,7 +10,6 @@ class IndependentRollGenerator extends RollGenerator {
             return RollGenerator.getRandomInt(1, die.sides);
         })
     }
-
 }
 
 export default IndependentRollGenerator;
