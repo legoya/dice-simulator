@@ -6,9 +6,16 @@ import {
     MAX_DICE_FACES,
     MAX_DICE,
     DEFAULT_DIE_FACE_COLOUR,
-    DEFAULT_DIE_NUMBER_COLOUR
+    DEFAULT_DIE_NUMBER_COLOUR,
+    INDEPENDENT_RANDOMNESS,
+    DIE_DEPENDENT_RANDOMNESS,
+    FULLY_DEPENDENT_RANDOMNESS,
+    INDEPENDENT_DESCRIPTION,
+    DIE_DEPENDENT_DESCRIPTION,
+    FULLY_DEPENDENT_DESCRIPTION
 } from '.././constants';
 import { RollMode } from '.././models';
+
 
 function Config( { dice, setDice, rollMode, setMode, setIsConfigPage } ) {
     const [selectedSides, setSides] = useState(DEFAULT_DICE_FACES);
@@ -34,7 +41,11 @@ function Config( { dice, setDice, rollMode, setMode, setIsConfigPage } ) {
               <button class="tablinks" onClick={() => setMode(RollMode.DIE_DEPENDENT)}>{RollMode.DIE_DEPENDENT}</button>
               <button class="tablinks" onClick={() => setMode(RollMode.FULLY_DEPENDENT)}>{RollMode.FULLY_DEPENDENT}</button>
             </div>
-            <p>{rollMode}</p>
+
+            <div className={"roll-mode-description"}>
+                <RollModeDescritpion rollMode={rollMode}/>
+            </div>
+            {/* <p>{rollMode}</p> */}
   
             <button
                 disabled={dice.length === 0}
@@ -128,6 +139,36 @@ function DiceConfigDisplay( { dice, setDice }) {
             <div className={"die-x-row"}>{removeDieButtons}</div>
         </div>
     );
+}
+
+function RollModeDescritpion( { rollMode } ) {
+    if (rollMode === RollMode.INDEPENDENT) {
+        return (
+            <div>
+                <h4>{INDEPENDENT_RANDOMNESS}</h4>
+                <p>{INDEPENDENT_DESCRIPTION}</p>
+            </div>
+        );
+    }
+
+    if (rollMode === RollMode.DIE_DEPENDENT) {
+        return (
+            <div>
+                <h4>{DIE_DEPENDENT_RANDOMNESS}</h4>
+                <p>{DIE_DEPENDENT_DESCRIPTION}</p>
+            </div>
+        );
+    }
+
+    if (rollMode === RollMode.FULLY_DEPENDENT) {
+        return (
+            <div>
+                <h4>{FULLY_DEPENDENT_RANDOMNESS}</h4>
+                <p>{FULLY_DEPENDENT_DESCRIPTION}</p>
+            </div>
+        );
+    }
+
 }
 
 export default Config;
