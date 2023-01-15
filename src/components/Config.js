@@ -45,7 +45,6 @@ function Config( { dice, setDice, rollMode, setMode, setIsConfigPage } ) {
             <div className={"roll-mode-description"}>
                 <RollModeDescritpion rollMode={rollMode}/>
             </div>
-            {/* <p>{rollMode}</p> */}
   
             <button
                 disabled={dice.length === 0}
@@ -74,7 +73,7 @@ function DiceSidesConfig( { selectedSides, setSides } ) {
         <>
             <input type="number" id="dieSides" name="dieSides" min={MIN_DICE_FACES} max={MAX_DICE_FACES}
                 value={selectedSides} onChange={handleSelectedSidesChange}/>
-            <label htmlFor="dieSides">{" Number of Sides (2-99)"}</label><br/>
+            <label htmlFor="dieSides">{` Number of Sides (${MIN_DICE_FACES}-${MAX_DICE_FACES})`}</label><br/>
         </>
     );
 }
@@ -168,7 +167,6 @@ function RollModeDescritpion( { rollMode } ) {
             </div>
         );
     }
-
 }
 
 export default Config;
